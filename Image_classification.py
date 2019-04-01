@@ -6,7 +6,7 @@ Created on Mon Apr  1 16:52:40 2019
 @author: imartinez
 """
 
-
+# Tensorflow tutorial on image classification and image load
 import tensorflow as tf
 tf.VERSION
  
