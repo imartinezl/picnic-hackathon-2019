@@ -30,12 +30,7 @@ image_count
 
 import IPython.display as display
 
-def caption_image(image_path):
-    image_rel = pathlib.Path(image_path).relative_to(data_root)
-    return "Image (CC BY 2.0) " + ' - '.join(attributions[str(image_rel)].split(' - ')[:-1])
-    
 for n in range(3):
   image_path = random.choice(all_image_paths)
   display.display(display.Image(image_path))
-  print(caption_image(image_path))
   print()
