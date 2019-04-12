@@ -44,8 +44,8 @@ for ax in axarr:
 
 image_paths_train = "./train/" + data_train.file.values
 image_labels_train = data_train.label_index
-image_count_train = data_train.shape[0]
-
+image_paths_val = "./train/" + data_val.file.values
+image_labels_val = data_val.label_index
 
 def preprocess_image(image):
     image = tf.cond(
@@ -66,25 +66,24 @@ def load_and_preprocess_image(path):
 def load_and_preprocess_from_path_label(path, label):
     return load_and_preprocess_image(path), label
 
-
-ds_train = tf.data.Dataset.from_tensor_slices((image_paths_train, image_labels_train))
-ds_train = ds_train.map(load_and_preprocess_from_path_label)
-
-
-#ds_train = ds_train.shuffle(buffer_size=image_count)
-#ds_train = ds_train.shuffle(buffer_size=BATCH_SIZE*2)
-ds_train = ds_train.repeat()
-ds_train = ds_train.batch(BATCH_SIZE)
-ds_train = ds_train.prefetch(buffer_size=AUTOTUNE)
-ds_train
-
-mobile_net = tf.keras.applications.MobileNetV2(input_shape=(192, 192, 3), include_top=False)
-mobile_net.trainable=False
-
 def change_range(image,label):
   return 2*image-1, label
 
-ds_train = ds_train.map(change_range)
+def generate_dataset(image_paths, image_labels):
+    ds = tf.data.Dataset.from_tensor_slices((image_paths, image_labels))
+    ds = ds.map(load_and_preprocess_from_path_label)
+    
+    #ds = ds.shuffle(buffer_size=image_count)
+    #ds = ds.shuffle(buffer_size=BATCH_SIZE*2)
+    ds = ds.repeat()
+    ds = ds.batch(BATCH_SIZE)
+    ds = ds.prefetch(buffer_size=AUTOTUNE)    
+    ds = ds.map(change_range)
+    return ds
+
+# MODEL
+mobile_net = tf.keras.applications.MobileNetV2(input_shape=(192, 192, 3), include_top=False)
+mobile_net.trainable=False
 
 model = tf.keras.Sequential([
         mobile_net,
@@ -99,20 +98,16 @@ model.compile(optimizer = tf.train.AdamOptimizer(),
 len(model.trainable_variables)
 model.summary()
 
+ds_train = generate_dataset(image_paths_train, image_labels_train)
+ds_val = generate_dataset(image_paths_val, image_labels_val)
+
 steps_per_epoch_train = int(tf.ceil(len(image_paths_train)/BATCH_SIZE).numpy())
-steps_per_epoch_train
+
 
 #model.fit(ds, epochs=1, steps_per_epoch=3)
-model.fit(ds_train, epochs=1, steps_per_epoch=steps_per_epoch_train)
+model.fit(ds_train, epochs=1, steps_per_epoch=3, validation_data=ds_val, validation_steps=3)
 eval_train = model.evaluate(ds_train, steps=steps_per_epoch_train)
 
-# Evaluate Validation
-image_paths_val = "./train/" + data_val.file.values
-image_labels_val = data_val.label_index
-ds_val = tf.data.Dataset.from_tensor_slices((image_paths_val, image_labels_val))
-ds_val = ds_val.map(load_and_preprocess_from_path_label)
-ds_val = ds_val.batch(batch_size=BATCH_SIZE)
-ds_val = ds_val.map(change_range)
 
 eval_val = model.evaluate(ds_val, steps=1)
 
