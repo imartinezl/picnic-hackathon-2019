@@ -49,11 +49,12 @@ for i in [0, 1]:
 # =============================================================================
 #  DATASET BUILDING
 # =============================================================================
-train = pd.read_csv('train.tsv', sep='\t')
-label_to_index = dict((name, index) for index, name in enumerate(train.label.unique()))
-train['index'] = [label_to_index[label] for label in train.label]
+data = pd.read_csv('train.tsv', sep='\t')
+label_names = data.label.unique()
+label_to_index = dict((name, index) for index, name in enumerate(label_names))
+data['label_index'] = [label_to_index[label] for label in data.label]
 
-all_image_paths = "./train/" + train.file.values
+all_image_paths = "./train/" + data.file.values
 path_ds = tf.data.Dataset.from_tensor_slices(all_image_paths)
 
 print('shape: ', repr(path_ds.output_shapes))
@@ -78,12 +79,17 @@ AUTOTUNE = tf.data.experimental.AUTOTUNE
 image_ds = path_ds.map(load_and_preprocess_image, num_parallel_calls=AUTOTUNE)
 
 plt.figure(figsize=(8, 8))
-for n, image in enumerate(image_ds.take(4)):
+for n, image in enumerate(image_ds.shuffle(20).take(4)):
     plt.subplot(2, 2, n+1)
     plt.imshow(image)
     plt.grid(False)
     plt.xticks([])
     plt.yticks([])
+
+label_ds = tf.data.Dataset.from_tensor_slices(tf.cast(data.label_index, tf.int64))
+for label in label_ds.take(10):
+    print(label.numpy())
+    print(label_names[label.numpy()])
 
 
 
