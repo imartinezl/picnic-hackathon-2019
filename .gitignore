@@ -2,3 +2,4 @@ train/*
 test/*
 .DS_Store
 venv/*
+Graph/*
