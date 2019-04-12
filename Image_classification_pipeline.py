@@ -37,7 +37,6 @@ f.subplots_adjust(hspace=0)
 for ax in axarr:
     ax.label_outer()
 
-
 # =============================================================================
 # A dataset of (image, label) pairs
 # =============================================================================
@@ -98,22 +97,35 @@ model.compile(optimizer = tf.train.AdamOptimizer(),
 len(model.trainable_variables)
 model.summary()
 
+
 ds_train = generate_dataset(image_paths_train, image_labels_train)
 ds_val = generate_dataset(image_paths_val, image_labels_val)
 
 steps_per_epoch_train = int(tf.ceil(len(image_paths_train)/BATCH_SIZE).numpy())
+steps_per_epoch_val = int(tf.ceil(len(image_paths_val)/BATCH_SIZE).numpy())
 
+tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./Graph', write_graph=True, write_images=True)
+model.fit(ds_train, epochs=10, steps_per_epoch=steps_per_epoch_train, 
+          validation_data=ds_val, validation_steps=steps_per_epoch_val,
+          callbacks=[tbCallBack])
 
-#model.fit(ds, epochs=1, steps_per_epoch=3)
-model.fit(ds_train, epochs=1, steps_per_epoch=3, validation_data=ds_val, validation_steps=3)
-eval_train = model.evaluate(ds_train, steps=steps_per_epoch_train)
-
-
+eval_train = model.evaluate(ds_train, steps=1)
 eval_val = model.evaluate(ds_val, steps=1)
 
 output_train = model.predict(ds_train, steps=1, verbose=1)
 output_train.shape
 predictions_train = [np.argmax(x) for x in output_train]
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Predict  samples
