@@ -37,7 +37,7 @@ label_names = data.label.unique()
 label_to_index = dict((name, index) for index, name in enumerate(label_names))
 data['label_index'] = [label_to_index[label] for label in data.label]
 
-data_train, data_val = train_test_split(data, test_size=0.6)
+data_train, data_val = train_test_split(data, test_size=0.2)
 f, axarr = plt.subplots(3, sharex=True)
 axarr[0].hist(data.label_index, bins=25)
 axarr[1].hist(data_train.label_index, bins=25)
@@ -90,7 +90,7 @@ def generate_dataset(image_paths, image_labels):
     return ds
 
 # MODEL
-mobile_net = tf.keras.applications.ResNet50(input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, 3), include_top=False)
+mobile_net = tf.keras.applications.Xception(input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, 3), include_top=False)
 mobile_net.trainable=False
 
 model = tf.keras.Sequential([
@@ -136,11 +136,11 @@ ds_val = generate_dataset(image_paths_val, image_labels_val)
 steps_per_epoch_train = int(tf.ceil(len(image_paths_train)/BATCH_SIZE).numpy())
 steps_per_epoch_val = int(tf.ceil(len(image_paths_val)/BATCH_SIZE).numpy())
 
-
+esCallBack = tf.keras.callbacks.EarlyStopping()
 #tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./Graph', write_graph=True, write_images=True)
-model.fit(ds_train, epochs=10, steps_per_epoch=steps_per_epoch_train, 
+model.fit(ds_train, epochs=15, steps_per_epoch=steps_per_epoch_train, 
           validation_data=ds_val, validation_steps=steps_per_epoch_val,
-          )
+          callbacks = [esCallBack])
 
 eval_train = model.evaluate(ds_train, steps=1)
 eval_val = model.evaluate(ds_val, steps=1)
