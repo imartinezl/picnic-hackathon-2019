@@ -2,6 +2,7 @@ train/*
 test/*
 .DS_Store
 venv/*
-Graph/*
+graph/*
 submission.tsv
-model.h5
+models/*
+submissions/*
