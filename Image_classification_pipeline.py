@@ -18,11 +18,11 @@ tf.enable_eager_execution()
 tf.VERSION
 AUTOTUNE = tf.data.experimental.AUTOTUNE
 BATCH_SIZE = 32
-IMAGE_HEIGHT = 192
-IMAGE_WIDTH = 192
+IMAGE_HEIGHT = 299
+IMAGE_WIDTH = 299
 
 config = tf.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.1
+config.gpu_options.per_process_gpu_memory_fraction = 0.15
 #config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
 #config.log_device_placement = True  # to log device placement (on which device the operation ran)
 sess = tf.Session(config=config)
@@ -90,7 +90,7 @@ def generate_dataset(image_paths, image_labels):
     return ds
 
 # MODEL
-mobile_net = tf.keras.applications.Xception(input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, 3), include_top=False)
+mobile_net = tf.keras.applications.InceptionV3(input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, 3), include_top=False)
 mobile_net.trainable=False
 
 model = tf.keras.Sequential([
@@ -111,11 +111,15 @@ model = tf.keras.Sequential([
 #        
 #        tf.keras.layers.Conv2D(filters=16, kernel_size=2, padding='same',activation='relu'),
 #        tf.keras.layers.MaxPooling2D(pool_size=2),
-#        tf.keras.layers.Dropout(0.3),
-#        
+#        tf.keras.layers.Dropout(0.2),
+        
 #        tf.keras.layers.Flatten(),     
 #        tf.keras.layers.Dense(256, activation='relu'),     
-#        tf.keras.layers.Dropout(0.4),
+#        tf.keras.layers.Dropout(0.2),
+#        tf.keras.layers.Dense(128, activation='relu'),     
+#        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.Dense(64, activation='relu'),     
+        tf.keras.layers.Dropout(0.2),
 
         tf.keras.layers.Dense(len(label_names), activation='softmax')
         ])
@@ -136,11 +140,11 @@ ds_val = generate_dataset(image_paths_val, image_labels_val)
 steps_per_epoch_train = int(tf.ceil(len(image_paths_train)/BATCH_SIZE).numpy())
 steps_per_epoch_val = int(tf.ceil(len(image_paths_val)/BATCH_SIZE).numpy())
 
-esCallBack = tf.keras.callbacks.EarlyStopping()
-#tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./Graph', write_graph=True, write_images=True)
-model.fit(ds_train, epochs=15, steps_per_epoch=steps_per_epoch_train, 
+esCallBack = tf.keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=1)
+tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./graph', write_graph=False, write_images=False)
+model.fit(ds_train, epochs=30, steps_per_epoch=steps_per_epoch_train, 
           validation_data=ds_val, validation_steps=steps_per_epoch_val,
-          callbacks = [esCallBack])
+          callbacks = [esCallBack, tbCallBack])
 
 eval_train = model.evaluate(ds_train, steps=1)
 eval_val = model.evaluate(ds_val, steps=1)
@@ -175,7 +179,7 @@ output_test = model.predict(x=ds_test,steps=steps_per_epoch_test,verbose=True)
 output_test.shape
 data_test['label'] = label_names[[np.argmax(x) for x in output_test]]
 
-data_test.to_csv('submission.tsv', sep = '\t', index=False)
+data_test.to_csv('submission_17-04-19.tsv', sep = '\t', index=False)
 
 
 
