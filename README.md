@@ -4,7 +4,9 @@ This repo contains the code for the [Picnic Image Classification Hackathon](http
 
 The challenge was to design a solution to help in the classification of images of products for customer support.
 
-![](https://res.cloudinary.com/devpost/image/fetch/s--3uci4Nf2--/c_limit,f_auto,fl_lossy,q_auto:eco,w_900/https://siliconcanals.nl/wp-content/uploads/2015/08/picnic-thumb.jpg)
+<p align="center">
+ <img src='https://res.cloudinary.com/devpost/image/fetch/s--3uci4Nf2--/c_limit,f_auto,fl_lossy,q_auto:eco,w_900/https://siliconcanals.nl/wp-content/uploads/2015/08/picnic-thumb.jpg'>
+</p>
 
 ## What it does
 
@@ -124,16 +126,19 @@ Tensorflow provides multiple ways to build and train image classification models
 
 As new computing devices (such as GPUs and TPUs) make it possible to train neural networks at an increasingly fast rate, the CPU processing is prone to becoming the bottleneck. The [tf.data API](https://www.tensorflow.org/guide/performance/datasets) provides users with building blocks to design input pipelines that effectively utilize the CPU, optimizing each step of the ETL process.
 
-In a naive feed_dict pipeline the GPU always sits by idly whenever it has to wait for the CPU to provide it with the next batch of data.
+- In a naive feed_dict pipeline the GPU always sits by idly whenever it has to wait for the CPU to provide it with the next batch of data.
+<p align="center">
+ <img src='https://dominikschmidt.xyz/tensorflow-data-pipeline/assets/feed_dict_pipeline.png' width='80%'>
+</p>
 
-![](https://dominikschmidt.xyz/tensorflow-data-pipeline/assets/feed_dict_pipeline.png)
-
-A tf.data pipeline, however, can prefetch the next batches asynchronously to minimize the total idle time. 
+- A tf.data pipeline, however, can prefetch the next batches asynchronously to minimize the total idle time. 
 The pipeline can be further speed up by parallelizing the loading and preprocessing operations.
 
-![](https://dominikschmidt.xyz/tensorflow-data-pipeline/assets/tf_data_pipeline.png)
+<p align="center">
+ <img src='https://dominikschmidt.xyz/tensorflow-data-pipeline/assets/tf_data_pipeline.png' width='80%'>
+</p>
 
-[*Source*]: [https://dominikschmidt.xyz/tensorflow-data-pipeline/](https://dominikschmidt.xyz/tensorflow-data-pipeline/)
+Source [https://dominikschmidt.xyz/tensorflow-data-pipeline/](https://dominikschmidt.xyz/tensorflow-data-pipeline/)
 
 Given the huge size of the training dataset, in this case the most suitable method was the [tf.data](https://www.tensorflow.org/api_docs/python/tf/data) API.
 
