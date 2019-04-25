@@ -4,9 +4,9 @@ This repo contains the code for the [Picnic Image Classification Hackathon](http
 
 The challenge was to design a solution to help in the classification of images of products for customer support.
 
-<p align="center">
- <img src='https://res.cloudinary.com/devpost/image/fetch/s--3uci4Nf2--/c_limit,f_auto,fl_lossy,q_auto:eco,w_900/https://siliconcanals.nl/wp-content/uploads/2015/08/picnic-thumb.jpg'>
-</p>
+
+<img src='https://res.cloudinary.com/devpost/image/fetch/s--3uci4Nf2--/c_limit,f_auto,fl_lossy,q_auto:eco,w_900/https://siliconcanals.nl/wp-content/uploads/2015/08/picnic-thumb.jpg'>
+
 
 ## What it does
 
