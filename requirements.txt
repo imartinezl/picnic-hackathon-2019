@@ -20,7 +20,7 @@ entrypoints==0.3
 gast==0.2.2
 grpcio==1.53.2
 h5py==2.9.0
-idna==2.8
+idna==3.7
 imagesize==1.1.0
 ipykernel==5.1.0
 ipython==8.10.0
