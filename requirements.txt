@@ -39,7 +39,7 @@ Keras-Preprocessing==1.0.9
 keyring==19.0.1
 kiwisolver==1.0.1
 lazy-object-proxy==1.3.1
-Markdown==3.1
+Markdown==3.8.1
 MarkupSafe==1.1.1
 matplotlib==3.0.3
 mccabe==0.6.1
